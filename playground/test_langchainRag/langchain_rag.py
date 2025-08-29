@@ -22,6 +22,7 @@ chat = ChatZhipuAI(api_key=api_key, model="glm-4")
 # 3、从网页中抓取和加载内容
 loader = WebBaseLoader(
     web_path=("https://lilianweng.github.io/posts/2023-06-23-agent/",),
+  
     bs_kwargs=dict(
         parse_only=bs4.SoupStrainer(
             class_=("post-content", "post-title", "post-header")
@@ -30,43 +31,10 @@ loader = WebBaseLoader(
 )
 
 docs = loader.load()
-
+# print(docs)
 # 4、使用RecursiveCharacterTextSpliter将内容分割成更小的块
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 doc_chunks = text_splitter.split_documents(docs)    # 结果是一个Document列表，会把docs分割成多个Document对象，每个Document对象中都有一个meta属性和一个page_content属性
-
-# print(splits)
-# for index_docs, doc_chunk in enumerate(doc_chunks):
-#     # print(f"Document {index_docs + 1}")
-#     print(doc_chunk)
-#     # for index_field, field in enumerate(doc_chunk):
-#     #     print(f"field {index_field + 1}: {field}")
-#     print("\n" + "*"*60 + "\n")
-
-
-# 5、对每个块，使用嵌入模型进行向量化
-# client = ZhipuAI(api_key=api_key)
-
-# embeddings = []
-# for doc_chunk in doc_chunks:
-#     for field_type, field_content in doc_chunk:  
-#         if field_type == "page_content" and field_content.strip():
-#             try:
-#                 response = client.embeddings.create(
-#                     model="embedding-3",
-#                     dimensions=1024,
-#                     input=field_content
-#                 )
-#             except Exception as e:
-#                 print(f"请求失败，错误信息：{e}")
-#             else:
-#                 if hasattr(response, "data"):
-#                     embeddings.append(response.data[0].embedding)
-
-# 打印嵌入向量
-# for index, embedding in enumerate(embeddings):
-#     print(f"Embedding {index + 1}: {embedding[:3]}")
-# print(len(embeddings[0]))
 
 class EmbeddingGenerator:
     def __init__(self, model_name, dimensions):
@@ -81,6 +49,7 @@ class EmbeddingGenerator:
                 response = self.client.embeddings.create(model=self.model_name, dimensions=self.dimensions, input=text)
             except Exception as e:
                 print(f"请求失败，错误信息：{e}")
+                embeddings.append([0] * self.dimensions)
             else:
                 if hasattr(response, "data"):
                     embeddings.append(response.data[0].embedding)
