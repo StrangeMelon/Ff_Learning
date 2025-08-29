@@ -121,7 +121,7 @@ you are an assistant for question-answering tasks. Use the following pieces of r
 Question:{question}
 Context:{context}
 Answer:
-        """ # 这里 'hub.pull' 是从某处获取提示的方法
+""" 
 
 prompt_runnable = PromptTemplate.from_template(prompt)
 
