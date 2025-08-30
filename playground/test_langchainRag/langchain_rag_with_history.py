@@ -181,7 +181,8 @@ from rich import print
 print(f"first_answer: {first_answer}")
 print("*" * 60)
 print(f"second_answer: {second_answer}")
-
+for chat_history in store.values():
+    print(chat_history)
 
 # import bs4
 # from langchain.chains import create_history_aware_retriever, create_retrieval_chain
